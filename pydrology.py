@@ -3,14 +3,14 @@ import math
 
 
 __D8_DIRECTIONS__ = {
-    1: (1, 2),
-    2: (2, 2),
-    4: (2, 1),
-    8: (2, 0),
-    16: (1, 0),
-    32: (0, 0),
-    64: (0, 1),
-    128: (0, 2)
+    1: (1, 2),  # east 
+    2: (2, 2),  # southeast
+    4: (2, 1),  # south
+    8: (2, 0),  # southwest
+    16: (1, 0), # west
+    32: (0, 0), # northwest
+    64: (0, 1), # north
+    128: (0, 2) # northeast
 }
 
 
@@ -50,7 +50,7 @@ def __get_neighbors__(array, row, col):
 def flowdir_d8(array):
     '''
     Returns a d8 flow direction grid based on a DEM. Directions are
-    coded with the following values:
+    coded with the following values: 
     32 64 128
     16  #   1
      8  4   2
