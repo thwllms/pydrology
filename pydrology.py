@@ -31,13 +31,13 @@ def __get_neighbors__(array, row, col):
     else:
         subset = numpy.zeros((3, 3), array.dtype)
         mask = numpy.zeros(subset.shape, bool)
-        for row in range(top_cut, bottom_cut):
-            for col in range(left_cut, right_cut):
-                subset_row = row - top_cut
-                subset_col = col - left_cut
-                if row >= 0 and col >= 0:
+        for i in range(top_cut, bottom_cut):
+            for j in range(left_cut, right_cut):
+                subset_row = i - top_cut
+                subset_col = j - left_cut
+                if i >= 0 and j >= 0:
                     try:
-                        value = array[row][col]
+                        value = array[i][j]
                         subset[subset_row][subset_col] = value
                     except:
                         mask[subset_row][subset_col] = True
@@ -58,10 +58,9 @@ def flowdir_d8(array):
     result = numpy.zeros(array.shape, 'uint8')
     directions_list = __D8_DIRECTIONS__.keys()
     directions_list.sort()
-    for row in range(0, array.shape[0]):
-        for col in range(0, array.shape[1]):
-            value = array[row][col]
-            neighbors = __get_neighbors__(array, row, col)
+    for i, row in enumerate(array):
+        for j, value in enumerate(row):
+            neighbors = __get_neighbors__(array, i, j)
             comparison_slope = 0.0
             for direction in directions_list:
                 coord = __D8_DIRECTIONS__[direction]
@@ -75,5 +74,5 @@ def flowdir_d8(array):
                 slope = drop / horizontal_dist
                 if slope > comparison_slope:
                     comparison_slope = slope
-                    result[row][col] = direction
+                    result[i][j] = direction
     return result
