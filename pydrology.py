@@ -47,6 +47,17 @@ def __get_neighbors__(array, row, col):
     return result
 
 
+def __pick_direction__(directions):
+    '''
+    Given a list of flow directions, select the middle-most direction.
+    For an even number of directions, err counterclockwise.
+    '''
+    if len(directions) % 2 == 1:
+        return numpy.median(directions)
+    else:
+        return directions[(len(directions) / 2) - 1]
+
+
 def flowdir_d8(array):
     '''
     Returns a d8 flow direction grid based on a DEM. Directions are
@@ -61,9 +72,13 @@ def flowdir_d8(array):
     for i, row in enumerate(array):
         for j, value in enumerate(row):
             neighbors = __get_neighbors__(array, i, j)
+            masked_neighbors = []
             comparison_slope = 0.0
             for direction in directions_list:
                 coord = __D8_DIRECTIONS__[direction]
+                bool_mask = neighbors.mask[coord[0]][coord[1]]
+                if bool_mask == True:
+                    masked_neighbors.append(direction)
                 neighbor_value = neighbors[coord[0]][coord[1]]
                 if direction in (2, 8, 32, 128):
                     # Account for longer distance along diagonals
@@ -75,4 +90,8 @@ def flowdir_d8(array):
                 if slope > comparison_slope:
                     comparison_slope = slope
                     result[i][j] = direction
+            # Let outlet point flow away from other cells. Select the
+            # middle-most direction.
+            if result[i][j] == 0 and len(masked_neighbors) > 0:
+                result[i][j] = __pick_direction__(masked_neighbors)
     return result
