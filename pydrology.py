@@ -76,20 +76,20 @@ def flowdir_d8(array):
             comparison_slope = 0.0
             for direction in directions_list:
                 coord = __D8_DIRECTIONS__[direction]
-                bool_mask = neighbors.mask[coord[0]][coord[1]]
-                if bool_mask == True:
-                    masked_neighbors.append(direction)
                 neighbor_value = neighbors[coord[0]][coord[1]]
-                if direction in (2, 8, 32, 128):
-                    # Account for longer distance along diagonals
-                    horizontal_dist = math.sqrt(2.0)
+                if neighbor_value is numpy.ma.masked:
+                    masked_neighbors.append(direction)
                 else:
-                    horizontal_dist = 1.0
-                drop = value - neighbor_value
-                slope = drop / horizontal_dist
-                if slope > comparison_slope:
-                    comparison_slope = slope
-                    result[i][j] = direction
+                    if direction in (2, 8, 32, 128):
+                        # Account for longer distance along diagonals
+                        horizontal_dist = math.sqrt(2.0)
+                    else:
+                        horizontal_dist = 1.0
+                    drop = value - neighbor_value
+                    slope = drop / horizontal_dist
+                    if slope > comparison_slope:
+                        comparison_slope = slope
+                        result[i][j] = direction
             # Let outlet point flow away from other cells. Select the
             # middle-most direction.
             if result[i][j] == 0 and len(masked_neighbors) > 0:
