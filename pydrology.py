@@ -14,27 +14,53 @@ __D8_DIRECTIONS__ = {
 }
 
 
+def __get_3x3_edges__(row, col):
+    '''
+    For cell (row, col) in a 2D array, return a dictionary of "edges" to query
+    the 3x3 block surrounding the cell.
+    '''
+    top_edge = row - 1
+    bottom_edge = row + 2
+    left_edge = col - 1
+    right_edge = col + 2
+    return {'top': top_edge,
+            'bottom': bottom_edge,
+            'left': left_edge,
+            'right': right_edge}
+
+
+def __in_middle__(array, row, col, edges=None):
+    '''
+    Return True if (row, col) falls in the middle of 2D array.
+    Return False if (row, col) falls along the edge of 2D array.
+    '''
+    if edges == None:
+        edges = __get_3x3_edges__(row, col)
+    if edges['top'] >= 0 and edges['left'] >= 0 \
+        and edges['bottom'] <= array.shape[0] \
+        and edges['right'] <= array.shape[1]:
+        return True
+    else:
+        return False
+
+
 def __get_neighbors__(array, row, col):
     '''
     Retrieves a 3x3 block of cells from "array", with array[row][col] at
     the center.
     '''
-    top_cut = row - 1
-    bottom_cut = row + 2
-    left_cut = col - 1
-    right_cut = col + 2
-    if top_cut >= 0 and left_cut >= 0 and bottom_cut <= array.shape[0] \
-        and right_cut <= array.shape[1]:
-
-        subset = array[top_cut:bottom_cut, left_cut:right_cut]
+    edges = __get_3x3_edges__(row, col)
+    if __in_middle__(array, row, col, edges):
+        subset = array[edges['top']:edges['bottom'], 
+                       edges['left']:edges['right']]
         mask = numpy.zeros(subset.shape, bool)
     else:
         subset = numpy.zeros((3, 3), array.dtype)
         mask = numpy.zeros(subset.shape, bool)
-        for i in range(top_cut, bottom_cut):
-            for j in range(left_cut, right_cut):
-                subset_row = i - top_cut
-                subset_col = j - left_cut
+        for i in range(edges['top'], edges['bottom']):
+            for j in range(edges['left'], edges['right']):
+                subset_row = i - edges['top']
+                subset_col = j - edges['left']
                 if i >= 0 and j >= 0:
                     try:
                         value = array[i][j]
