@@ -25,7 +25,7 @@ def test_get_neighbors_middle():
     numpy.testing.assert_equal(result, neighbors)
 
 
-def test_get_neighbors_edge():
+def test_get_neighbors_left_edge():
     mask = numpy.array([[True, False, False],
                         [True, False, False],
                         [True, False, False]])
@@ -33,6 +33,17 @@ def test_get_neighbors_edge():
                              [None, 74, 67],
                              [None, 69, 53]], mask = mask)
     neighbors = pydrology.__get_neighbors__(TEST_ARRAY, 1, 0)
+    numpy.testing.assert_equal(result, neighbors)
+
+
+def test_get_neighbors_right_edge():
+    mask = numpy.array([[False, False, True],
+                        [False, False, True],
+                        [False, False, True]])
+    result = numpy.ma.array([[58, 49, None],
+                             [46, 50, None],
+                             [38, 48, None]], mask = mask)
+    neighbors = pydrology.__get_neighbors__(TEST_ARRAY, 1, 5)
     numpy.testing.assert_equal(result, neighbors)
 
 
@@ -54,6 +65,7 @@ def test_flowdir_d8():
 
 if __name__ == '__main__':
     test_get_neighbors_middle()
-    test_get_neighbors_edge()
+    test_get_neighbors_left_edge()
+    test_get_neighbors_right_edge()
     test_get_neighbors_corner()
     test_flowdir_d8()
